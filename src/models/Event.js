@@ -4,6 +4,11 @@ const { Schema, model } = mongoose;
 export default model(
   "Event",
   new Schema({
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     name: {
       type: String,
       required: true,

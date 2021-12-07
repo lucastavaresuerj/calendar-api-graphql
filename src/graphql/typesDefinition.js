@@ -31,21 +31,33 @@ export default gql(`#graphql
 
   type Event {
     id: String!
+    name: String
+    owner: User
     begin: Date
     end: Date
-    guest: [Guest]
+    guests: [Guest]
   }
 
   input EventCreate {
+    name: String!
     begin: Date!
     end: Date!
-    guest: [GuestCreate]!
+    guests: [GuestCreate]!
   }
 
   input EventEdit {
     id: String!
+    name: String
     begin: Date
     end: Date
-    guest: [GuestEdit]
+    guests: [GuestEdit]
+  }
+
+  input EventSearch {
+    id: [String]
+    name: [String]
+    begin: Date
+    end: Date
+    guests: [GuestEdit]
   }
 `);

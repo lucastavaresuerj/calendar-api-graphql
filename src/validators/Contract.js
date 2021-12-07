@@ -47,6 +47,18 @@ export default class Contract {
     }
   }
 
+  isLessThan(
+    value1,
+    value2,
+    message = `The ${value1} is bigger than ${value2}`,
+    comparator = (a, b) => a < b
+  ) {
+    if (!comparator(value1, value2)) {
+      this.errors = addError(this.errors, createError(message, "lessThan"));
+      throw this.errors["lessThan"];
+    }
+  }
+
   errors() {
     return errors;
   }

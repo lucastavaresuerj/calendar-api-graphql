@@ -20,5 +20,5 @@ export async function createUser(user) {
 }
 
 export async function deleteUser(userId) {
-  return await User.findByIdAndRemove(id).exec();
+  return await User.findByIdAndRemove(userId).exec();
 }
