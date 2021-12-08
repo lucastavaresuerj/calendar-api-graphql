@@ -11,7 +11,7 @@ export async function getOne(query = {}) {
 }
 
 export async function editGuest({ id, confirmation }) {
-  return await Guest.updateOne({ id }, { confirmation });
+  return await Guest.updateOne({ id, user }, { confirmation });
 }
 
 export async function createGuest(guest) {

@@ -24,8 +24,8 @@ export async function getOne(query = {}) {
   return await Event.findOne(query).exec();
 }
 
-export async function editEvent({ id, ...event }) {
-  return await Event.updateOne({ id }, event);
+export async function editEvent({ id, owner, ...event }) {
+  return await Event.updateOne({ _id: id, owner }, event);
 }
 
 export async function createEvent(event) {
@@ -33,6 +33,24 @@ export async function createEvent(event) {
   return await newEvent.save();
 }
 
-export async function deleteEvent(eventId) {
-  return await Event.findByIdAndRemove(eventId).exec();
+async function editGuest(filter, guests, option) {
+  const update = {};
+  if (option === "add") {
+    update[$push] = { guests: { each: guests } };
+  } else if (option == "remove") {
+    update[$pullAll] = { guests };
+  }
+  return await Event.updateOne(filter, update).exec();
+}
+
+export async function addGuests({ id, owner, guests }) {
+  return editGuest({ _id: id, owner }, guests, "add");
+}
+
+export async function removeGuests({ id, owner, guests }) {
+  return editGuest({ _id: id, owner }, guests, "remove");
+}
+
+export async function deleteEvent(eventId, owner) {
+  return await Event.findOneAndRemove({ _id: eventId, owner }).exec();
 }

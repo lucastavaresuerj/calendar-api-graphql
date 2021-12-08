@@ -1,1 +1,1 @@
-// export { default as userMutation } from "./user.js";
+export { default as eventMutation } from "./event.js";
