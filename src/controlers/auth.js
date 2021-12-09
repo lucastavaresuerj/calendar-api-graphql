@@ -7,8 +7,7 @@ import { createToken } from "../auth/token.js";
 
 export async function login(req, res, next) {
   const { name, password } = req.body;
-  const user = await repository.getOne({ name }, true);
-  console.log(user);
+  const user = await repository.getOne({ name }, "id password");
   if (checkPassword(password, user.password)) {
     return res.send(createToken({ id: user.id }));
   }
@@ -21,10 +20,11 @@ export async function signin(req, res, next) {
 
   const contract = new Contract();
   try {
-    contract.hasMinLen(name, 3);
+    contract.hasMinLen(name, 2);
     contract.hasMaxLen(user, 0);
   } catch (error) {
-    console.log("TODO: erro");
+    console.log("TODO: erro signin", error.message);
+    return res.send("bad signin");
   }
 
   const encriptedPassword = creatHashPassword(password);

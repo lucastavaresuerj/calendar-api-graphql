@@ -14,19 +14,22 @@ export default gql(`#graphql
   }
 
   type Guest {
-    id: String!
     user: User
     confirmation: Confirmation
   }
 
-  input GuestCreate {
-    user: UserInput
-    confirmation: Confirmation
+  input GuestInput {
+    user: UserInput!
+    confirmation: Confirmation!
   }
 
-  input GuestEdit {
-    id: String!
+  input GuestEditStatus {
+    event: EventInput!
     confirmation: Confirmation!
+  }
+
+  input GuestUser {
+    user: UserInput!
   }
 
   type Event {
@@ -42,7 +45,7 @@ export default gql(`#graphql
     name: String!
     begin: Date!
     end: Date!
-    guests: [GuestCreate]!
+    guests: [GuestUser]
   }
 
   input EventEdit {
@@ -50,7 +53,7 @@ export default gql(`#graphql
     name: String
     begin: Date
     end: Date
-    guests: [GuestEdit]
+    guests: [GuestInput]
   }
 
   input EventSearch {
@@ -58,6 +61,15 @@ export default gql(`#graphql
     name: [String]
     begin: Date
     end: Date
-    guests: [GuestEdit]
+    guests: [GuestInput]
+  }
+
+  input EventInput {
+    id: String!
+  }
+
+  input EventChangeGuests {
+    id: String!
+    guests: [GuestUser!]!
   }
 `);

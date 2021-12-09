@@ -19,21 +19,21 @@ export default class Contract {
   }
 
   hasMinLen(value, min, message = `Must have at least ${min}`) {
-    if ((value.length || value) < min) {
+    if ((value?.length || value) < min) {
       this.errors = addError(this.errors, createError(message, "minLen"));
       throw this.errors["minLen"];
     }
   }
 
   hasMaxLen(value, max, message = `Must have no more than ${max}`) {
-    if ((value.length || value) > max) {
+    if ((value?.length || value) > max) {
       this.errors = addError(this.errors, createError(message, "maxLen"));
       throw this.errors["maxLen"];
     }
   }
 
   isFixedLen(value, len, message = `The length is different of ${len}`) {
-    if ((value.length || value) != len) {
+    if ((value?.length || value) != len) {
       this.errors = addError(this.errors, createError(message, "fixedLen"));
       throw this.errors["fixedLen"];
     }

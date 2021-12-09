@@ -20,10 +20,20 @@ export async function deleteEvent(parent, { event }, { userId }, info) {
   return await repository.deleteEvent(event.id, userId);
 }
 
-export async function addGuests(parent, { event }, { userId }, info) {
-  return await repository.addGuests({ ...event, owner: userId });
+export async function addGuests(
+  parent,
+  { event, event: { guests } },
+  { userId },
+  info
+) {
+  return await repository.addGuests({ ...event, owner: userId }, guests);
 }
 
-export async function removeGuests(parent, { event }, { userId }, info) {
-  return await repository.removeGuests({ ...event, owner: userId });
+export async function removeGuests(
+  parent,
+  { event, event: { guests } },
+  { userId },
+  info
+) {
+  return await repository.removeGuests({ ...event, owner: userId }, guests);
 }

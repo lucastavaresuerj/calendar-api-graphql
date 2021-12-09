@@ -2,16 +2,15 @@ import mongoose from "mongoose";
 
 const User = mongoose.model("User");
 
-function hasPasswordField(password = false) {
-  return `_id name ${password ? "password" : ""}`;
+export async function get(query = {}, projection = "id name") {
+  return await User.find(query, projection).exec();
 }
 
-export async function get(query = {}) {
-  return await User.find(query, hasPasswordField()).exec();
-}
-
-export async function getOne(query = {}, password = false) {
-  return await User.findOne(query, hasPasswordField(password)).exec();
+export async function getOne(
+  query = {},
+  projection = "id name token password"
+) {
+  return await User.findOne(query, projection).exec();
 }
 
 export async function createUser(user) {

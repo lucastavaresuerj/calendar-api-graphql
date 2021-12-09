@@ -23,9 +23,17 @@ export default model(
     },
     guests: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "Guest",
-        required: false,
+        confirmation: {
+          type: Object,
+          enum: [false, true, "awaiting"],
+          default: "awaiting",
+          required: true,
+        },
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
       },
     ],
   })

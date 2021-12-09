@@ -1,24 +1,10 @@
 import mongoose from "mongoose";
 
-const Guest = mongoose.model("Guest");
+const Event = mongoose.model("Event");
 
-export async function get(query = {}) {
-  return await Guest.find(query).exec();
-}
-
-export async function getOne(query = {}) {
-  return await Guest.findOne(query).exec();
-}
-
-export async function editGuest({ id, confirmation }) {
-  return await Guest.updateOne({ id, user }, { confirmation });
-}
-
-export async function createGuest(guest) {
-  const newGuest = new Guest(guest);
-  return await newGuest.save();
-}
-
-export async function deleteGuest(guestId) {
-  return await Guest.findByIdAndRemove(guestId).exec();
+export async function editGuest({ event: { id }, confirmation }, userId) {
+  Event.findOneAndUpdate(
+    { id, "guests.user": userId },
+    { $set: { "guest.$.confirmation": confirmation } }
+  );
 }

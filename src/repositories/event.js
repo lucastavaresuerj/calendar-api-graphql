@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 
 const Event = mongoose.model("Event");
 
+function formatGuests(guests = []) {
+  return guests.map(({ user: { id } }) => ({
+    user: id,
+  }));
+}
+
 export async function get(query = {}, operator = "and") {
   const search = {
     [`$${operator}`]: [
@@ -25,32 +31,39 @@ export async function getOne(query = {}) {
 }
 
 export async function editEvent({ id, owner, ...event }) {
-  return await Event.updateOne({ _id: id, owner }, event);
+  return await Event.findOneAndUpdate({ _id: id, owner }, event);
 }
 
-export async function createEvent(event) {
-  const newEvent = new Event(event);
-  return await newEvent.save();
+export async function createEvent({ guests, ...event }) {
+  const guestsFormatted = formatGuests(guests);
+  const newEvent = new Event({ ...event, guests: guestsFormatted });
+  await newEvent.save();
+
+  return newEvent.populate({ path: "guests.user" });
 }
 
 async function editGuest(filter, guests, option) {
+  const guestsFormatted = formatGuests(guests);
   const update = {};
   if (option === "add") {
-    update[$push] = { guests: { each: guests } };
+    update["$push"] = { guests: { $each: guestsFormatted } };
   } else if (option == "remove") {
-    update[$pullAll] = { guests };
+    update["$pull"] = {
+      guests: { "user.id": { $in: guestsFormatted.map(({ id }) => id) } },
+    };
   }
-  return await Event.updateOne(filter, update).exec();
+  await Event.findOneAndUpdate(filter, update).exec();
+  return await Event.findOne(filter).populate("guests.user").exec();
 }
 
-export async function addGuests({ id, owner, guests }) {
-  return editGuest({ _id: id, owner }, guests, "add");
+export async function addGuests({ id, owner }, guests) {
+  return editGuest({ id, owner }, guests, "add");
 }
 
-export async function removeGuests({ id, owner, guests }) {
-  return editGuest({ _id: id, owner }, guests, "remove");
+export async function removeGuests({ id, owner }, guests) {
+  return editGuest({ id, owner }, guests, "remove");
 }
 
 export async function deleteEvent(eventId, owner) {
-  return await Event.findOneAndRemove({ _id: eventId, owner }).exec();
+  return await Event.findOneAndRemove({ id: eventId, owner }).exec();
 }

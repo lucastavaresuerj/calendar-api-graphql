@@ -8,7 +8,7 @@ import app from "./src/app.js";
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers: [resolvers, scalars],
-  context: ({ req: userId }) => {
+  context: ({ req: { userId } }) => {
     return { userId };
   },
 });
