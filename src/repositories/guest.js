@@ -3,8 +3,12 @@ import mongoose from "mongoose";
 const Event = mongoose.model("Event");
 
 export async function editGuest({ event: { id }, confirmation }, userId) {
-  Event.findOneAndUpdate(
-    { id, "guests.user": userId },
-    { $set: { "guest.$.confirmation": confirmation } }
-  );
+  return await Event.findOneAndUpdate(
+    { _id: id, guests: { $elemMatch: { user: userId } } },
+    { $set: { "guests.$.confirmation": confirmation } },
+    { new: true, safe: true, upsert: true }
+  )
+    .select({ guests: { $elemMatch: { user: userId } } })
+    .populate("guests.user")
+    .exec();
 }

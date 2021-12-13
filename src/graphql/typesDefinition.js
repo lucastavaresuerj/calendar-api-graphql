@@ -13,6 +13,11 @@ export default gql(`#graphql
     id: String!
   }
 
+  input UserSearch {
+    id: String
+    name: String
+  }
+
   type Guest {
     user: User
     confirmation: Confirmation
@@ -23,6 +28,10 @@ export default gql(`#graphql
     confirmation: Confirmation!
   }
 
+  # Só quem pode mudar o status do convidado
+  # é o próprio convidado, por isso só precisa
+  # do evento e confirmação, o id do usuário já
+  # vem no token
   input GuestEditStatus {
     event: EventInput!
     confirmation: Confirmation!
@@ -58,10 +67,11 @@ export default gql(`#graphql
 
   input EventSearch {
     id: [String]
+    owner: [UserSearch]
     name: [String]
     begin: Date
     end: Date
-    guests: [GuestInput]
+    guests: [UserSearch]
   }
 
   input EventInput {

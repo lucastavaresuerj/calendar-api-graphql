@@ -1,15 +1,16 @@
 import * as repository from "../repositories/event.js";
+import { Contract } from "../validators/index.js";
 
 export async function getEvents(parent, { search }, { userId }, info) {
-  return await repository.get({ ...search, owner: userId });
+  return await repository.getSearchedEvents(userId, search);
 }
 
-export async function getUserEvents(parent, { userId }, info) {
-  return await repository.get({ owner: userId, guests: [userId] }, "or");
+export async function getUserEvents(parent, args, { userId }, info) {
+  return await repository.getRelatedEvents(userId);
 }
 
-export async function getEvent(parent, { id }, context, info) {
-  return await repository.getOne({ _id: id });
+export async function getEvent(parent, { id, sei }, { userId }, info) {
+  return await repository.getOne(userId, { _id: id });
 }
 
 export async function createEvent(parent, { event }, { userId }, info) {
@@ -22,18 +23,23 @@ export async function deleteEvent(parent, { event }, { userId }, info) {
 
 export async function addGuests(
   parent,
-  { event, event: { guests } },
+  { event: { guests, id } },
   { userId },
   info
 ) {
-  return await repository.addGuests({ ...event, owner: userId }, guests);
+  const contract = new Contract();
+  const event = await repository.addGuests({ id, owner: userId }, guests);
+
+  contract.isRequired(event, "The query has no results");
+
+  return event;
 }
 
 export async function removeGuests(
   parent,
-  { event, event: { guests } },
+  { event: { guests, id } },
   { userId },
   info
 ) {
-  return await repository.removeGuests({ ...event, owner: userId }, guests);
+  return await repository.removeGuests({ id, owner: userId }, guests);
 }
