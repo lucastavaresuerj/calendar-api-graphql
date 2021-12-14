@@ -3,6 +3,7 @@ import cors from "cors";
 
 import authRoute from "./routes/auth.js";
 import { authMiddleware } from "./services/index.js";
+import errorFormatter from "./error/errorFormatter.js";
 
 const app = express();
 app.listen({ port: 4000 }, () =>
@@ -16,8 +17,14 @@ app.use("/graphql", authMiddleware);
 
 app.use("/auth", authRoute);
 
+app.get("/error", (req, res, next) => {
+  throw new Error("Path errado");
+  next();
+});
+
 app.use((err, req, res, next) => {
-  res.send(err);
+  res.send(errorFormatter(err));
+  return;
 });
 
 export default app;

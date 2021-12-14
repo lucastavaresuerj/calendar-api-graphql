@@ -1,73 +1,50 @@
-function createError(message, name) {
-  const error = new Error(message);
-  error.name = name;
-  return error;
+export class ContractError extends Error {
+  constructor(message, name) {
+    super(message);
+    this.name = name;
+  }
 }
 
-function addError(errors = {}, error = new Error()) {
-  return { ...errors, [error.name]: error };
-}
-
-export default class Contract {
-  errors = {};
-
-  isRequired(value, message = "The value is required") {
+export class Contract {
+  static isRequired(value, message = "The value is required") {
     if (!value || value.length == 0) {
-      this.errors = addError(this.errors, createError(message, "required"));
-      throw this.errors["required"];
+      throw new ContractError(message, "required");
     }
   }
 
-  hasMinLen(value, min, message = `Must have at least ${min}`) {
+  static hasMinLen(value, min, message = `Must have at least ${min}`) {
     if ((value?.length || value) < min) {
-      this.errors = addError(this.errors, createError(message, "minLen"));
-      throw this.errors["minLen"];
+      throw new ContractError(message, "minLen");
     }
   }
 
-  hasMaxLen(value, max, message = `Must have no more than ${max}`) {
+  static hasMaxLen(value, max, message = `Must have no more than ${max}`) {
     if ((value?.length || value) > max) {
-      this.errors = addError(this.errors, createError(message, "maxLen"));
-      throw this.errors["maxLen"];
+      throw new ContractError(message, "maxLen");
     }
   }
 
-  isFixedLen(value, len, message = `The length is different of ${len}`) {
+  static isFixedLen(value, len, message = `The length is different of ${len}`) {
     if ((value?.length || value) != len) {
-      this.errors = addError(this.errors, createError(message, "fixedLen"));
-      throw this.errors["fixedLen"];
+      throw new ContractError(message, "fixedLen");
     }
   }
 
-  isEmail(value, message = `"${value}" is not an valid e-mail`) {
+  static isEmail(value, message = `"${value}" is not an valid e-mail`) {
     const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
     if (!reg.test(value)) {
-      this.errors = addError(this.errors, createError(message, "email"));
-      throw this.errors["email"];
+      throw new ContractError(message, "email");
     }
   }
 
-  isLessThan(
+  static isLessThan(
     value1,
     value2,
     message = `The ${value1} is bigger than ${value2}`,
     comparator = (a, b) => a < b
   ) {
     if (!comparator(value1, value2)) {
-      this.errors = addError(this.errors, createError(message, "lessThan"));
-      throw this.errors["lessThan"];
+      throw new ContractError(message, "lessThan");
     }
-  }
-
-  errors() {
-    return errors;
-  }
-
-  clear() {
-    this.errors = {};
-  }
-
-  isValid() {
-    return Object.keys(this.errors).length == 0;
   }
 }

@@ -8,23 +8,24 @@ import { createToken } from "../auth/token.js";
 export async function login(req, res, next) {
   const { name, password } = req.body;
   const user = await repository.getOne({ name }, "id password");
+
   if (checkPassword(password, user.password)) {
-    return res.send(createToken({ id: user.id }));
+    return res.status(200).send({ token: createToken({ id: user.id }) });
   }
-  throw new AuthenticationError("Could not make login");
+
+  return next(new AuthenticationError("Could not make login"));
 }
 
 export async function signin(req, res, next) {
   const { name, password } = req.body;
   const user = await repository.get({ name });
 
-  const contract = new Contract();
   try {
-    contract.hasMinLen(name, 2);
-    contract.hasMaxLen(user, 0);
+    Contract.hasMinLen(name, 2, "name must have at least 2 characters");
+    Contract.hasMaxLen(user, 0, "Username already taken");
   } catch (error) {
-    console.log("TODO: erro signin", error.message);
-    return res.send("bad signin");
+    error.message = `Signin error: ${error.message}`;
+    return next(error);
   }
 
   const encriptedPassword = creatHashPassword(password);
@@ -32,6 +33,7 @@ export async function signin(req, res, next) {
     name,
     password: encriptedPassword,
   });
+
   return res.send(createToken({ id: newUser.id }));
 }
 

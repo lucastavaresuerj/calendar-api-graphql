@@ -1,1 +1,1 @@
-export { default as Contract } from "./Contract.js";
+export { Contract, ContractError } from "./Contract.js";

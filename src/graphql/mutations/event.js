@@ -5,7 +5,7 @@ export default gql(`#graphql
 		createEvent(event: EventCreate): Event
     deleteEvent(event: EventInput): Event
     editEvent(event: EventEdit): Event
-    addGuests(event: EventChangeGuests): Event
-    removeGuests(event: EventChangeGuests): Event
+    addGuests(event: EventInput, guests: [GuestUser!]!): Event
+    removeGuests(event: EventInput, guests: [GuestUser!]!): Event
   }
 `);

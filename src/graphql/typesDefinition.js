@@ -4,6 +4,11 @@ export default gql(`#graphql
   scalar Date
   scalar Confirmation
 
+  input DateRange {
+    begin: Date!
+    end: Date!
+  }
+
   type User {
     id: String!
     name: String!
@@ -50,6 +55,11 @@ export default gql(`#graphql
     guests: [Guest]
   }
 
+  type Day {
+    date: Date!
+    events: [Event]!
+  }
+
   input EventCreate {
     name: String!
     begin: Date!
@@ -76,10 +86,5 @@ export default gql(`#graphql
 
   input EventInput {
     id: String!
-  }
-
-  input EventChangeGuests {
-    id: String!
-    guests: [GuestUser!]!
   }
 `);
