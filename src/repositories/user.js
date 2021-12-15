@@ -6,10 +6,7 @@ export async function get(query = {}, projection = "id name") {
   return await User.find(query, projection).exec();
 }
 
-export async function getOne(
-  query = {},
-  projection = "id name token password"
-) {
+export async function getOne(query = {}, projection = "id name password") {
   return await User.findOne(query, projection).exec();
 }
 

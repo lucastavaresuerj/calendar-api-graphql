@@ -4,7 +4,6 @@ const { Schema, model } = mongoose;
 const schema = new Schema({
   name: { type: String, required: true },
   password: { type: String, required: true },
-  token: String,
 });
 
 export default model("User", schema);
