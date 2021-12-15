@@ -38,10 +38,9 @@ export async function addGuests(
   { userId },
   info
 ) {
-  const contract = new Contract();
   const event = await repository.addGuests({ id, owner: userId }, guests);
 
-  contract.isRequired(event, "The query has no results");
+  Contract.isRequired(event, "The query has no results");
 
   return event;
 }
