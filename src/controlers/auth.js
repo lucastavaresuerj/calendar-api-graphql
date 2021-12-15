@@ -9,11 +9,15 @@ export async function login(req, res, next) {
   const { name, password } = req.body;
   const user = await repository.getOne({ name }, "id password");
 
-  if (checkPassword(password, user.password)) {
-    return res.status(200).send({ token: createToken({ id: user.id }) });
+  try {
+    Contract.isRequired(user, "Name or passord are wrong");
+    if (checkPassword(password, user.password)) {
+      return res.status(200).send({ token: createToken({ id: user.id }) });
+    }
+  } catch (error) {
+    return next(new AuthenticationError(error.message));
   }
-
-  return next(new AuthenticationError("Could not make login"));
+  return next(new AuthenticationError("Name or passord are wrong"));
 }
 
 export async function signin(req, res, next) {
@@ -34,7 +38,7 @@ export async function signin(req, res, next) {
     password: encriptedPassword,
   });
 
-  return res.send(createToken({ id: newUser.id }));
+  return res.status(200).send({ token: createToken({ id: newUser.id }) });
 }
 
 export async function logout(req, res, next) {
