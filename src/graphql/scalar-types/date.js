@@ -5,7 +5,10 @@ export default {
     name: "Date",
     description: "Date custom scalar type",
     serialize(value) {
-      return value.getTime(); // Convert outgoing Date to integer for JSON
+      if (value instanceof Date) {
+        return value.toISOString(); // Convert outgoing Date to integer for JSON
+      }
+      return value;
     },
     parseValue(value) {
       return new Date(value); // Convert incoming integer to Date

@@ -14,11 +14,16 @@ export default class DateUtil {
 
   static getDaysBetween(d1, d2) {
     let days = [];
-    let diffDays = this.dateDiffDay(d2, d1);
-    for (let i = 0; i <= diffDays; i++) {
-      let newDay = new Date(d1);
-      newDay.setDate(d1.getDate() + i);
-      days.push(newDay);
+    let numDays;
+    if (typeof d2 === "number") {
+      numDays = d2 - 1;
+    } else {
+      numDays = this.dateDiffDay(d2, d1);
+    }
+
+    const { year, month, date } = this.getDateAtt(d1);
+    for (let i = 0; i <= numDays; i++) {
+      days.push(new Date(year, month, date + i));
     }
     return days;
   }

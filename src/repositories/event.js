@@ -11,7 +11,8 @@ function formatGuests(guests = []) {
   }));
 }
 
-function formatEvents(events) {
+function formatEvents(events, startDay, numDays = 15) {
+  // Agrupa os eventos na seguinte forma {"2021-11-15": events, "2021-11-16": outroEvents }
   function formattDaysEvents(accumulator, { begin, end, ...restEvent }) {
     function addKeyValueToAcc(key, value) {
       return {
@@ -40,15 +41,25 @@ function formatEvents(events) {
   events = events.map((event) => event.toObject());
 
   const daysKeys = events.reduce(formattDaysEvents, {});
-  const ret = Object.keys(daysKeys)
+  const daysWithValues = Object.keys(daysKeys)
     .map((date) => ({
       date: new Date(date),
       events: daysKeys[date],
     }))
     .sort((a, b) => (a.date.getTime() < b.date.getTime() ? -1 : 1));
 
-  console.log(ret[0].events);
-  return ret;
+  const daysInrange = DateUtil.getDaysBetween(startDay, numDays);
+
+  return daysInrange.map((day) => {
+    const events =
+      daysWithValues.find(({ date }) => day.getTime() == date.getTime())
+        ?.events || [];
+    console.log(events);
+    return {
+      date: day,
+      events,
+    };
+  });
 }
 
 function userRelatedEvents(user) {
@@ -61,7 +72,7 @@ export async function getRelatedEvents(user, { begin, end }) {
   const events = await userRelatedEvents(user)
     .find({ begin: { $gte: begin }, end: { $lte: end } })
     .exec();
-  return formatEvents(events);
+  return formatEvents(events, begin);
 }
 
 export async function getSearchedEvents(user, queryItems) {
