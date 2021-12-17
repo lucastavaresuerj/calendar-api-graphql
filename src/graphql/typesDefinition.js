@@ -72,7 +72,7 @@ export default gql(`#graphql
     name: String
     begin: Date
     end: Date
-    guests: [GuestInput]
+    guests: [GuestInput!]
   }
 
   input EventSearch {
