@@ -30,7 +30,7 @@ export default gql(`#graphql
 
   input GuestInput {
     user: UserInput!
-    confirmation: Confirmation!
+    confirmation: Confirmation
   }
 
   # Só quem pode mudar o status do convidado

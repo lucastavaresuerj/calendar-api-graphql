@@ -54,7 +54,6 @@ function formatEvents(events, startDay, numDays = 15) {
     const events =
       daysWithValues.find(({ date }) => day.getTime() == date.getTime())
         ?.events || [];
-    console.log(events);
     return {
       date: day,
       events,
@@ -70,7 +69,7 @@ function userRelatedEvents(user) {
 
 export async function getRelatedEvents(user, { begin, end }) {
   const events = await userRelatedEvents(user)
-    .find({ begin: { $gte: begin }, end: { $lte: end } })
+    .find({ $or: [{ begin: { $gte: begin } }, { end: { $lte: end } }] })
     .exec();
   return formatEvents(events, begin);
 }
@@ -112,14 +111,20 @@ export async function getOne(user, filter = {}) {
   return await userRelatedEvents(user).findOne(filter).exec();
 }
 
-export async function editEvent(filter, event) {
-  console.log("filter", filter, "event", event);
-  return await Event.findOneAndUpdate(filter, event, { new: true })
+export async function editEvent(filter, { guests, ...event }) {
+  const guestsFormatted = formatGuests(guests);
+  const ret = await Event.findOneAndUpdate(
+    filter,
+    { $set: { guests: guestsFormatted, ...event } },
+    { new: true }
+  )
     .populate("guests.user owner")
     .exec();
+  return ret;
 }
 
 export async function createEvent({ guests, ...event }) {
+  console.log("createEvent", { guests, ...event });
   const guestsFormatted = formatGuests(guests);
   const newEvent = new Event({ ...event, guests: guestsFormatted });
   await newEvent.save();
@@ -129,7 +134,6 @@ export async function createEvent({ guests, ...event }) {
 
 async function editGuest(filter, guests, option) {
   const guestsFormatted = formatGuests(guests);
-  console.log(guestsFormatted);
   const update = {};
   if (option === "add") {
     update["$push"] = { guests: { $each: guestsFormatted } };
@@ -155,5 +159,7 @@ export async function removeGuests(filter, guests) {
 }
 
 export async function deleteEvent(owner, eventId) {
-  return await Event.findOneAndRemove({ id: eventId, owner }).exec();
+  return await Event.findOneAndRemove({ id: eventId, owner })
+    .populate("guests.user owner")
+    .exec();
 }
