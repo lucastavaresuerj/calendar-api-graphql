@@ -69,13 +69,13 @@ function userRelatedEvents(user) {
 
 export async function getRelatedEvents(user, { begin, end }) {
   const events = await userRelatedEvents(user)
-    .find({ $or: [{ begin: { $gte: begin } }, { end: { $lte: end } }] })
+    .and({ $or: [{ begin: { $gte: begin } }, { end: { $lte: end } }] })
     .exec();
   return formatEvents(events, begin);
 }
 
 export async function getSearchedEvents(user, queryItems) {
-  const eventsQuery = Event.find().populate("owner guests.user");
+  const eventsQuery = userRelatedEvents(user);
 
   async function getIdsByUserNames(names) {
     const ids = await repoUser.get(
@@ -108,7 +108,7 @@ export async function getSearchedEvents(user, queryItems) {
 }
 
 export async function getOne(user, filter = {}) {
-  return await userRelatedEvents(user).findOne(filter).exec();
+  return await userRelatedEvents(user).and(filter).findOne().exec();
 }
 
 export async function editEvent(filter, { guests, ...event }) {
