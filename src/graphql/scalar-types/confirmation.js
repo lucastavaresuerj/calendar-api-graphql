@@ -5,7 +5,7 @@ export default {
     name: "Confirmation",
     description: "Confirmation custom scalar type",
     serialize(value) {
-      return value; // Convert outgoing Confirmation to string for JSON
+      return value; // Convert outgoing Confirmation to JSON value
     },
     parseValue(value) {
       return value; // Convert incoming integer to Any

@@ -10,7 +10,10 @@ export async function getUserEvents(parent, { range }, { userId }, info) {
 }
 
 export async function getEvent(parent, { id }, { userId }, info) {
-  return await repository.getOne(userId, { _id: id });
+  const event = await repository.getOne(userId, { _id: id });
+  Contract.isRequired(event, "The query has no results");
+
+  return event;
 }
 
 export async function createEvent(parent, { event }, { userId }, info) {
@@ -27,9 +30,10 @@ export async function editEvent(
   { userId },
   info
 ) {
-  const ret = await repository.editEvent({ id, owner: userId }, event);
-  console.log(ret);
-  return ret;
+  const eventEdited = await repository.editEvent({ id, owner: userId }, event);
+  Contract.isRequired(eventEdited, "The query has no results");
+
+  return eventEdited;
 }
 
 export async function addGuests(
@@ -39,7 +43,6 @@ export async function addGuests(
   info
 ) {
   const event = await repository.addGuests({ id, owner: userId }, guests);
-
   Contract.isRequired(event, "The query has no results");
 
   return event;
@@ -51,5 +54,8 @@ export async function removeGuests(
   { userId },
   info
 ) {
-  return await repository.removeGuests({ id, owner: userId }, guests);
+  const event = await repository.removeGuests({ id, owner: userId }, guests);
+  Contract.isRequired(event, "The query has no results");
+
+  return event;
 }

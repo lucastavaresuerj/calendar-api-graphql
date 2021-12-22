@@ -31,8 +31,8 @@ export class Contract {
   }
 
   static isEmail(value, message = `"${value}" is not an valid e-mail`) {
-    const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-    if (!reg.test(value)) {
+    const checkEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+    if (!checkEmail.test(value)) {
       throw new ContractError(message, "email");
     }
   }

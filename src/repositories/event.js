@@ -6,8 +6,9 @@ import { DateUtil } from "../util/index.js";
 const Event = mongoose.model("Event");
 
 function formatGuests(guests = []) {
-  return guests.map(({ user: { id } }) => ({
+  return guests.map(({ user: { id }, confirmation }) => ({
     user: id,
+    confirmation,
   }));
 }
 
@@ -124,7 +125,6 @@ export async function editEvent(filter, { guests, ...event }) {
 }
 
 export async function createEvent({ guests, ...event }) {
-  console.log("createEvent", { guests, ...event });
   const guestsFormatted = formatGuests(guests);
   const newEvent = new Event({ ...event, guests: guestsFormatted });
   await newEvent.save();

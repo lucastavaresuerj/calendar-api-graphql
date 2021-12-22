@@ -25,11 +25,11 @@ export async function signin(req, res, next) {
   const user = await repository.get({ name });
 
   try {
-    Contract.hasMinLen(name, 2, "name must have at least 2 characters");
     Contract.hasMaxLen(user, 0, "Username already taken");
+    Contract.hasMinLen(name, 2, "name must have at least 2 characters");
+    Contract.hasMinLen(password, 6, "password must have at least 6 characters");
   } catch (error) {
-    error.message = `Signin error: ${error.message}`;
-    return next(error);
+    return next(new AuthenticationError(error.message));
   }
 
   const encriptedPassword = creatHashPassword(password);
