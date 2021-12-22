@@ -3,7 +3,10 @@ import { AuthenticationError } from "apollo-server-errors";
 import * as repository from "../repositories/user.js";
 import { Contract } from "../validators/index.js";
 import { creatHashPassword, checkPassword } from "../auth/password.js";
+import { verifyToken } from "../auth/token.js";
+
 import { createToken } from "../auth/token.js";
+import { blackList } from "../services/index.js";
 
 export async function login(req, res, next) {
   const { name, password } = req.body;
@@ -42,5 +45,15 @@ export async function signin(req, res, next) {
 }
 
 export async function logout(req, res, next) {
-  res.send("TODO: fazer função de logout");
+  const token = req.headers["x-access-token"];
+
+  try {
+    Contract.isRequired(token, 'Need provide a token on "x-access-token"');
+    verifyToken(token);
+  } catch (error) {
+    return next(error);
+  }
+
+  blackList.add(token);
+  res.status(200).send({ message: "logout done" });
 }
