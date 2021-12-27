@@ -12,16 +12,16 @@ export default class DateUtil {
     return date.toISOString().replace(/T.*/g, "T00:00");
   }
 
-  static getDaysBetween(d1, d2) {
+  static getDaysBetween(begin, limit) {
     let days = [];
     let numDays;
-    if (typeof d2 === "number") {
-      numDays = d2 - 1;
+    if (typeof limit === "number") {
+      numDays = limit - 1;
     } else {
-      numDays = this.dateDiffDay(d2, d1);
+      numDays = this.dateDiffDay(limit, begin);
     }
 
-    const { year, month, date } = this.getDateAtt(d1);
+    const { year, month, date } = this.getDateAtt(begin);
     for (let i = 0; i <= numDays; i++) {
       days.push(new Date(year, month, date + i));
     }

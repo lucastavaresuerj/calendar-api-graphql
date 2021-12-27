@@ -12,54 +12,26 @@ function formatGuests(guests = []) {
   }));
 }
 
-function formatEvents(events, startDay, numDays = 15) {
-  // Agrupa os eventos na seguinte forma {"2021-11-15": events, "2021-11-16": outroEvents }
-  function formattDaysEvents(accumulator, { begin, end, ...restEvent }) {
-    function addKeyValueToAcc(key, value) {
-      return {
-        ...accumulator,
-        [key]: accumulator[key] ? [...accumulator[key], value] : [value],
-      };
-    }
+function formatEvents(events, startDay, endDay) {
+  console.log(events);
+  const daysInrange = DateUtil.getDaysBetween(startDay, endDay);
 
-    let daysDiff = DateUtil.dateDiffDay(end, begin);
-    if (daysDiff == 0) {
-      let keyDate = DateUtil.getDateDayString(begin);
-      return addKeyValueToAcc(keyDate, { ...restEvent, begin, end });
-    } else {
-      let daysBetween = DateUtil.getDaysBetween(begin, end);
+  return daysInrange.map((day) => ({
+    date: day,
+    events: events.filter(({ begin, end }) => {
+      console.log(
+        begin.getTime(),
+        day.getTime(),
+        end.getTime(),
+        begin.getTime() <= day.getTime() && end.getTime() >= day.getTime()
+      );
 
-      return daysBetween.reduce((acc, day) => {
-        let keyDate = DateUtil.getDateDayString(day);
-        return {
-          ...addKeyValueToAcc(keyDate, { ...restEvent, begin, end }),
-          ...acc,
-        };
-      }, {});
-    }
-  }
-
-  events = events.map((event) => event.toObject());
-
-  const daysKeys = events.reduce(formattDaysEvents, {});
-  const daysWithValues = Object.keys(daysKeys)
-    .map((date) => ({
-      date: new Date(date),
-      events: daysKeys[date],
-    }))
-    .sort((a, b) => (a.date.getTime() < b.date.getTime() ? -1 : 1));
-
-  const daysInrange = DateUtil.getDaysBetween(startDay, numDays);
-
-  return daysInrange.map((day) => {
-    const events =
-      daysWithValues.find(({ date }) => day.getTime() == date.getTime())
-        ?.events || [];
-    return {
-      date: day,
-      events,
-    };
-  });
+      return (
+        (begin.getTime() <= day.getTime() && end.getTime() >= day.getTime()) ||
+        DateUtil.dateDiffDay(day, begin) == 0
+      );
+    }),
+  }));
 }
 
 function userRelatedEvents(user) {
@@ -72,7 +44,8 @@ export async function getRelatedEvents(user, { begin, end }) {
   const events = await userRelatedEvents(user)
     .and({ $or: [{ begin: { $gte: begin } }, { end: { $lte: end } }] })
     .exec();
-  return formatEvents(events, begin);
+  const eventsMapToObject = events.map((event) => event.toObject());
+  return formatEvents(eventsMapToObject, begin, end);
 }
 
 export async function getSearchedEvents(user, queryItems) {
