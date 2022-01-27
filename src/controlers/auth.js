@@ -2,7 +2,7 @@ import { AuthenticationError } from "apollo-server-errors";
 
 import * as repository from "../repositories/user.js";
 import { Contract } from "../validators/index.js";
-import { creatHashPassword, checkPassword } from "../auth/password.js";
+import { createHashPassword, checkPassword } from "../auth/password.js";
 import { verifyToken } from "../auth/token.js";
 
 import { createToken } from "../auth/token.js";
@@ -35,7 +35,7 @@ export async function signin(req, res, next) {
     return next(new AuthenticationError(error.message));
   }
 
-  const encriptedPassword = creatHashPassword(password);
+  const encriptedPassword = createHashPassword(password);
   const newUser = await repository.createUser({
     name,
     password: encriptedPassword,
