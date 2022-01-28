@@ -8,10 +8,6 @@ export default class DateUtil {
     );
   }
 
-  static getDateDayString(date) {
-    return date.toISOString().replace(/T.*/g, "T00:00");
-  }
-
   static getDaysBetween(begin, limit) {
     let days = [];
     let numDays;

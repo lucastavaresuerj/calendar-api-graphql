@@ -9,8 +9,3 @@ export function checkPassword(password = "", passwordEncripted = "") {
 export function createHashPassword(password = "") {
   return bcrypt.hashSync(password + PASSWORD_SECRET, parseInt(PASSWORD_SALT));
 }
-
-// console.log(createHashPassword());
-// console.log(createHashPassword(""));
-// console.log(createHashPassword("123456789"));
-// console.log(createHashPassword("M)w_cqIc.H"));
