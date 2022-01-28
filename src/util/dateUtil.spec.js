@@ -76,4 +76,10 @@ describe("Test the creation of date arrays", () => {
       DateUtil.getDaysBetween(sameDays.first, sameDays.last)
     ).toBeInstanceOf(Array);
   });
+
+  test("Should give Dates ", () => {
+    expect(
+      DateUtil.getDaysBetween(sameDays.first, sameDays.last)
+    ).toBeInstanceOf(Array);
+  });
 });
