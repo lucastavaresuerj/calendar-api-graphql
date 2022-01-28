@@ -69,5 +69,11 @@ describe("Test the static method of diff days", () => {
 });
 
 describe("Test the creation of date arrays", () => {
-  test("Should give an array of Date from two Dates", () => {});
+  const { sameDays, oneDayDiff, fiveDaysDiff } = testInput.couple;
+
+  test("Should give an array of Date from two Dates", () => {
+    expect(
+      DateUtil.getDaysBetween(sameDays.first, sameDays.last)
+    ).toBeInstanceOf(Array);
+  });
 });
