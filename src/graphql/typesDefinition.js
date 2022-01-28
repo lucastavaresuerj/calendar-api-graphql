@@ -28,6 +28,8 @@ export default gql(`#graphql
     confirmation: Confirmation
   }
 
+  union Person = User | Guest
+
   input GuestInput {
     user: UserInput!
     confirmation: Confirmation
